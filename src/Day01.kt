@@ -11,58 +11,40 @@ fun main() {
         return total
     }
 
-    fun findDigits(before: String): String {
-        if (before.isEmpty()) return ""
+    fun toCalDigit(s: String): Int {
         val digitMap = mapOf(
             "one" to 1, "two" to 2, "three" to 3, "four" to 4,
-            "five" to 5, "six" to 6, "seven" to 7, "eight" to 8, "nine" to 9
+            "five" to 5, "six" to 6, "seven" to 7, "eight" to 8, "nine" to 9,
+            "1" to 1, "2" to 2, "3" to 3, "4" to 4, "5" to 5, "6" to 6, "7" to 7, "8" to 8, "9" to 9
         )
-        var fdig = ""
-        var rest = ""
-        var lowIdx = Int.MAX_VALUE
-        for (key in digitMap.keys) {
-            if (before.contains(key)) {
-                val idx = before.indexOf(key)
-                if (idx < lowIdx) {
-                    lowIdx = idx
-                    fdig = digitMap[key].toString()
-                    rest = before.drop(idx + key.length)
-                }
+        var firstIdx = Integer.MAX_VALUE
+        var firstDigit = ""
+        digitMap.keys.forEach { key ->
+            val idx = s.indexOf(key)
+            if (idx != -1 && idx < firstIdx) {
+                firstIdx = idx
+                firstDigit = digitMap.getValue(key).toString()
             }
         }
-        if (fdig.isNotEmpty()) return fdig + findDigits(rest)
-        return fdig
+        var lastIdx = Integer.MIN_VALUE
+        var lastDigit = ""
+        digitMap.keys.forEach { key ->
+            val idx = s.lastIndexOf(key)
+            if (idx != -1 && idx > lastIdx) {
+                lastIdx = idx
+                lastDigit = digitMap.getValue(key).toString()
+            }
+        }
+        return "$firstDigit$lastDigit".toInt()
     }
 
-    fun toNumberStr(s: String): String {
-        val before = s.takeWhile { c -> !c.isDigit() }
-        val dig = s.indexOfFirst { c -> c.isDigit() }
-        if (dig != -1) return "${findDigits(before)}${s[dig]}${toNumberStr(s.drop(dig + 1))}"
-        return findDigits(before)
-    }
-
-
-     val numericDigits: Map<String, Int> = (1..9).associateBy(Int::toString)
-     val speltDigits: Map<String, Int> =
-        listOf("one", "two", "three", "four", "five", "six", "seven", "eight", "nine").zip(1..9).toMap()
-    fun parseCalibrationValue(line: String, allowableDigits: Map<String, Int> = numericDigits): Int {
-        val first = allowableDigits.keys.filter(line::contains).minBy(line::indexOf)
-        val last = allowableDigits.keys.maxBy(line::lastIndexOf)
-        return "${allowableDigits.getValue(first)}${allowableDigits.getValue(last)}".toInt()
-    }
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("001_test")
-    // part1(testInput).println()
+    //part1(testInput).println()
     fun part2(input: List<String>): Int {
-        return input.sumOf { line -> parseCalibrationValue(line, numericDigits + speltDigits) }
-        /*return input.map { s ->
-            val toNumberStr = toNumberStr(s.trim())
-            println("$s -> $toNumberStr")
-            toNumberStr.trim() }.map { s -> "${s.first()}${s.last()}".toInt() }.sum()*/
+        return input.sumOf { line -> toCalDigit(line) }
     }
-     part2(testInput).println()
-    //part2(listOf("two1nine","eightwothree","abcone2threexyz", "xtwone3four","4nineeightseven2","zoneight234","7pqrstsixteen")).println()
-    /* val input = readInput("Day01")
-     part1(input).println()
-     part2(input).println()*/
+    part2(testInput).println()
+    part2(listOf("two1nine","eightwothree","abcone2threexyz", "xtwone3four","4nineeightseven2","zoneight234","7pqrstsixteen")).println()
+
 }
