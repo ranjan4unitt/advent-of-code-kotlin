@@ -28,7 +28,7 @@ fun main() {
             for (j in scheme[i].indices) {
                 if (isSymbol((scheme[i][j]))) {
                     val steps = listOf(-1, 0, 1)
-                    var partsPerSymbol = mutableSetOf<Int>()
+                    val partsPerSymbol = mutableSetOf<Int>()
                     steps.forEach { side ->
                         steps.forEach { up ->
                             if (side != 0 || up != 0) {
@@ -60,7 +60,6 @@ fun main() {
 
     fun part1(input: List<String>): Int {
         val scheme = toScheme(input)
-        println(scheme.joinToString("\n") { it.joinToString("") })
         val result = partsPerSymbol(scheme)
         return result.mapValues { it.value.sum() }.values.sum()
     }
